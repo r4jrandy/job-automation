@@ -39,4 +39,4 @@ services:
         condition: service_completed_successfully
 
 volumes:
- n8n_data:/home/node/.n8n
+
