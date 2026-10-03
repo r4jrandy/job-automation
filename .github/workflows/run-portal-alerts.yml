@@ -55,6 +55,15 @@ jobs:
             echo "GEMINI_API_KEY=$GEMINI_API_KEY"
           } > .env
 
+      - name: Refresh Google OAuth access tokens
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          SHEETS_REFRESH_TOKEN: ${{ secrets.SHEETS_REFRESH_TOKEN }}
+          CALENDAR_REFRESH_TOKEN: ${{ secrets.CALENDAR_REFRESH_TOKEN }}
+        run: node scripts/refresh-google-tokens.js
+
       - name: Import credentials and workflows
         run: docker compose run --rm n8n-init
 
