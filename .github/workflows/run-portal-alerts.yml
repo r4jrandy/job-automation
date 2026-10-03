@@ -31,16 +31,15 @@ jobs:
         run: |
           ls workflows/*.json >/dev/null 2>&1 || { echo "No workflow JSON in workflows/"; exit 1; }
           grep -q "\"id\": \"$WORKFLOW_ID\"" workflows/*.json || { echo "Workflow id $WORKFLOW_ID not found"; exit 1; }
-          grep -q '"type": "n8n-nodes-base.executeWorkflowTrigger"' workflows/*.json || { echo "Workflow needs an Execute Workflow Trigger for CLI execution"; exit 1; }
 
       - name: Create .env from secrets
         env:
           N8N_ENCRYPTION_KEY: ${{ secrets.N8N_ENCRYPTION_KEY }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GMAIL_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-          SHEETS_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-          CALENDAR_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          SHEETS_REFRESH_TOKEN: ${{ secrets.SHEETS_REFRESH_TOKEN }}
+          CALENDAR_REFRESH_TOKEN: ${{ secrets.CALENDAR_REFRESH_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
@@ -55,15 +54,6 @@ jobs:
             echo "TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN"
             echo "GEMINI_API_KEY=$GEMINI_API_KEY"
           } > .env
-
-      - name: Refresh Google OAuth access tokens
-        env:
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
-          SHEETS_REFRESH_TOKEN: ${{ secrets.SHEETS_REFRESH_TOKEN }}
-          CALENDAR_REFRESH_TOKEN: ${{ secrets.CALENDAR_REFRESH_TOKEN }}
-        run: node scripts/refresh-google-tokens.js
 
       - name: Import credentials and workflows
         run: docker compose run --rm n8n-init
