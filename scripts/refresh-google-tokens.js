@@ -33,8 +33,12 @@ async function main() {
     });
 
     if (!response.ok) {
+      const errorBody = await response.json();
+      const errorDetails = [errorBody.error, errorBody.error_description]
+        .filter((detail) => typeof detail === 'string' && detail)
+        .join(': ');
       throw new Error(
-        `${label} token refresh failed (HTTP ${response.status}); check its refresh token and Google OAuth client secrets.`,
+        `${label} token refresh failed (HTTP ${response.status}${errorDetails ? `, ${errorDetails}` : ''}); check its refresh token and Google OAuth client secrets.`,
       );
     }
 
